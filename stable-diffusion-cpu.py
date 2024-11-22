@@ -33,7 +33,7 @@ class APIIngress:
 
 @serve.deployment(
     ray_actor_options={"num_cpus": 4},  # Adjust CPU cores according to needs
-    autoscaling_config={"min_replicas": 0, "max_replicas": 2},
+    autoscaling_config={"min_replicas": 1, "max_replicas": 2},
 )
 class StableDiffusionV2:
     def __init__(self):
