@@ -42,7 +42,6 @@ class StableDiffusionV2:
             beta_start=0.00085,
             beta_end=0.012,
             beta_schedule="scaled_linear",
-            tensor_format="np"
         )
         # Load Stable Diffusion Model
         self.engine = StableDiffusionEngine(
