@@ -163,7 +163,7 @@ class StableDiffusionEngine:
 
         # if we use LMSDiscreteScheduler, let's make sure latents are mulitplied by sigmas
         if isinstance(self.scheduler, LMSDiscreteScheduler):
-            latents = latents * self.scheduler.sigmas[0]
+            latents = latents * self.scheduler.sigmas[0].cpu().numpy()
 
         # prepare extra kwargs for the scheduler step, since not all schedulers have the same signature
         # eta (η) is only used with the DDIMScheduler, it will be ignored for other schedulers.
