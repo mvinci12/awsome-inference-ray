@@ -398,12 +398,13 @@ class StableDiffusionEngine:
                 sigma = self.scheduler.sigmas[i]
                 latent_model_input = latent_model_input / ((sigma**2 + 1) ** 0.5)
 
-            # Convert latent_model_input to a torch tensor
-            latent_model_input = torch.from_numpy(latent_model_input).float()
+            # Convert latent_model_input to a numpy array
+            if isinstance(latent_model_input, torch.Tensor):
+                latent_model_input = latent_model_input.numpy()
 
             # predict the noise residual
             noise_pred = result(self.unet.infer_new_request({
-                "latent_model_input": latent_model_input.numpy(),
+                "latent_model_input": latent_model_input,
                 "t": np.float64(t),
                 "encoder_hidden_states": text_embeddings
             }))
@@ -417,9 +418,9 @@ class StableDiffusionEngine:
 
             # compute the previous noisy sample x_t -> x_t-1
             if isinstance(self.scheduler, LMSDiscreteScheduler):
-                latents = self.scheduler.step(noise_pred, i, latents, **extra_step_kwargs)["prev_sample"]
+                latents = self.scheduler.step(noise_pred, i, torch.from_numpy(latents).float(), **extra_step_kwargs)["prev_sample"]
             else:
-                latents = self.scheduler.step(noise_pred, t, latents, **extra_step_kwargs)["prev_sample"]
+                latents = self.scheduler.step(noise_pred, t, torch.from_numpy(latents).float(), **extra_step_kwargs)["prev_sample"]
 
             # Convert back to NumPy array
             latents = latents.cpu().numpy()
@@ -437,4 +438,5 @@ class StableDiffusionEngine:
         image = (image / 2 + 0.5).clip(0, 1)
         image = (image[0].transpose(1, 2, 0)[:, :, ::-1] * 255).astype(np.uint8)
         return image
+
 
