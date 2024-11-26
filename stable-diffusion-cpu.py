@@ -8,6 +8,7 @@ from ray import serve
 from ray.serve.handle import DeploymentHandle
 from stable_diffusion_engine import StableDiffusionEngine
 from diffusers import LMSDiscreteScheduler, PNDMScheduler
+from PIL import Image
 
 app = FastAPI()
 
@@ -70,6 +71,7 @@ class StableDiffusionV2:
         )
         # Convert to PIL image for serving
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = Image.fromarray(image)
         return image
 
 
